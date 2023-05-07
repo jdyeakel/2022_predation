@@ -1,0 +1,216 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[      7149,        208]
+NotebookOptionsPosition[      6147,        187]
+NotebookOutlinePosition[      6546,        203]
+CellTagsIndexPosition[      6503,        200]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["Import Fit Data", "Text",
+ CellChangeTimes->{{3.892116285905217*^9, 
+  3.892116288121093*^9}},ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-\
+84dc2a80570b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ExpPreyfitdata", " ", "=", "  ", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "$HomeDirectory", ",", 
+        "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/mammalian_\
+fit_table.csv\>\""}], "}"}], "]"}], ",", "\"\<csv\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ExpPreymassdata", " ", "=", "  ", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "$HomeDirectory", ",", 
+        "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/mammalian_\
+mass.csv\>\""}], "}"}], "]"}], ",", "\"\<csv\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]"}], "Input",ExpressionUUID->"8d582e9c-9c58-49a7-\
+ad77-21a9401e343e"],
+
+Cell["\<\
+Calculate the Expected size of a prey given an predator of size Mp\
+\>", "Text",
+ CellChangeTimes->{{3.88246302767774*^9, 3.8824630442827168`*^9}, {
+  3.892382063047894*^9, 
+  3.8923820709999027`*^9}},ExpressionUUID->"df31d167-db0d-40fd-8222-\
+5754bc16f370"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"NOTE", ":", " ", 
+    RowBox[{
+    "THIS", " ", "IS", " ", "WHAT", " ", "MAKES", " ", "THIS", " ", 
+     "ANALYSIS", " ", "DIFFERENT", " ", "FROM", " ", "PREYPERSP"}]}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"OptPreyMass", "[", "Mp_", "]"}], " ", ":=", " ", 
+     RowBox[{"ppmrintExpPrey", "*", 
+      SuperscriptBox["Mp", "ppmrslopeExpPrey"]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrslopeExpPrey", " ", "=", " ", 
+     RowBox[{"(", 
+      RowBox[{"ExpPreyfitdata", "[", 
+       RowBox[{"[", 
+        RowBox[{"3", ",", "1"}], "]"}], "]"}], ")"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrintExpPrey", " ", "=", " ", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{"(", 
+        RowBox[{"ExpPreyfitdata", "[", 
+         RowBox[{"[", 
+          RowBox[{"2", ",", "1"}], "]"}], "]"}], ")"}], "]"}], "*", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "/", "1000"}], ")"}], "^", "ppmrslopeExpPrey"}], ")"}], 
+      "*", "1000"}]}], ";"}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"converted", " ", "from", " ", "KG", " ", "to", " ", "grams"}], 
+    "*)"}]}]}]], "Input",
+ CellChangeTimes->{
+  3.892039325040769*^9, {3.892381941411152*^9, 
+   3.8923820055708942`*^9}},ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-\
+76253caf218a"],
+
+Cell["Import Fit Data", "Text",
+ CellChangeTimes->{{3.892116285905217*^9, 
+  3.892116288121093*^9}},ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-\
+84dc2a80570b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ExpPredfitdata", " ", "=", " ", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "$HomeDirectory", ",", 
+        "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPred_fit_\
+table_revreps.csv\>\""}], "}"}], "]"}], ",", "\"\<csv\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ExpPredmassdata", " ", "=", " ", 
+   RowBox[{"Import", "[", 
+    RowBox[{"StringJoin", "[", 
+     RowBox[{"{", 
+      RowBox[{
+      "$HomeDirectory", ",", 
+       "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPredmass_\
+tablereps.csv\>\""}], "}"}], "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{
+  3.892205366727188*^9, {3.892226041824211*^9, 3.892226054142683*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"8d582e9c-9c58-49a7-ad77-21a9401e343e"],
+
+Cell["\<\
+Calculate the Expected size of a predator given an herbivore prey of size M\
+\>", "Text",
+ CellChangeTimes->{{3.88246302767774*^9, 3.8824630442827168`*^9}, {
+  3.8923820853329067`*^9, 
+  3.8923820856361227`*^9}},ExpressionUUID->"df31d167-db0d-40fd-8222-\
+5754bc16f370"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"NOTE", ":", " ", 
+    RowBox[{
+    "THIS", " ", "IS", " ", "WHAT", " ", "MAKES", " ", "THIS", " ", 
+     "ANALYSIS", " ", "DIFFERENT", " ", "FROM", " ", "PREDPERSP"}]}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"OptPredMass", "[", "M_", "]"}], " ", ":=", " ", 
+     RowBox[{"ppmrintExpPred", "*", 
+      SuperscriptBox["M", "ppmrslopeExpPred"]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrslopeExpPred", " ", "=", " ", 
+     RowBox[{"(", 
+      RowBox[{"ExpPredfitdata", "[", 
+       RowBox[{"[", 
+        RowBox[{"3", ",", "1"}], "]"}], "]"}], ")"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrintExpPred", " ", "=", " ", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{"(", 
+        RowBox[{"ExpPredfitdata", "[", 
+         RowBox[{"[", 
+          RowBox[{"2", ",", "1"}], "]"}], "]"}], ")"}], "]"}], "*", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "/", "1000"}], ")"}], "^", "ppmrslopeExpPred"}], ")"}], 
+      "*", "1000"}]}], ";"}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"converted", " ", "from", " ", "KG", " ", "to", " ", "grams"}], 
+    "*)"}], 
+   RowBox[{"(*", 
+    RowBox[{"converted", " ", "from", " ", "KG", " ", "to", " ", "grams"}], 
+    "*)"}]}]}]], "Input",
+ CellChangeTimes->{
+  3.892039325040769*^9, {3.892205395927361*^9, 3.892205397684834*^9}, {
+   3.892382030083412*^9, 
+   3.892382043730968*^9}},ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-\
+76253caf218a"]
+},
+WindowSize->{808, 911},
+WindowMargins->{{233, Automatic}, {213, Automatic}},
+FrontEndVersion->"13.2 for Mac OS X x86 (64-bit) (November 18, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"fd231f32-960d-405f-a11e-40c029dce1a7"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 157, 3, 35, "Text",ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-84dc2a80570b"],
+Cell[718, 25, 823, 23, 262, "Input",ExpressionUUID->"8d582e9c-9c58-49a7-ad77-21a9401e343e"],
+Cell[1544, 50, 268, 6, 35, "Text",ExpressionUUID->"df31d167-db0d-40fd-8222-5754bc16f370"],
+Cell[1815, 58, 1410, 41, 115, "Input",ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-76253caf218a"],
+Cell[3228, 101, 157, 3, 35, "Text",ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-84dc2a80570b"],
+Cell[3388, 106, 906, 24, 262, "Input",ExpressionUUID->"8d582e9c-9c58-49a7-ad77-21a9401e343e"],
+Cell[4297, 132, 279, 6, 35, "Text",ExpressionUUID->"df31d167-db0d-40fd-8222-5754bc16f370"],
+Cell[4579, 140, 1564, 45, 136, "Input",ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-76253caf218a"]
+}
+]
+*)
+

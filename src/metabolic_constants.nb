@@ -1,0 +1,932 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 13.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       158,          7]
+NotebookDataLength[     32603,        924]
+NotebookOptionsPosition[     31301,        900]
+NotebookOutlinePosition[     31700,        916]
+CellTagsIndexPosition[     31657,        913]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell["\<\
+Declare Metabolic Parameters and Allometric Functions
+These should NOT change regardless of Predator or Prey perspective\
+\>", "Text",
+ CellChangeTimes->{{3.892057925288352*^9, 3.892057943583481*^9}, {
+  3.892116024758959*^9, 
+  3.892116043714307*^9}},ExpressionUUID->"8044aa71-9b8b-4495-b2d8-\
+25ba3bfda9fd"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", "Constants", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", "Plants", "*)"}], "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{"\[Alpha]", "=", 
+     RowBox[{"(*", 
+      RowBox[{"2.10", "*", 
+       RowBox[{"10", "^", 
+        RowBox[{"(", 
+         RowBox[{"-", "9"}], ")"}]}]}], "*)"}], 
+     RowBox[{"(", 
+      RowBox[{"9.45", "*", 
+       RowBox[{"10", "^", 
+        RowBox[{"(", 
+         RowBox[{"-", "9"}], ")"}]}]}], ")"}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"kRes", "=", "23000"}], ";"}], 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"grams", "/", 
+      RowBox[{"m", "^", "2"}]}], " ", "carrying", " ", "capacity", " ", "of", 
+     " ", "resource"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Ed", "=", "18200"}], ";"}], " ", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"J", "/", "g"}], " ", "of", " ", "plant", " ", "Resource"}], " ",
+     "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Metabolic", " ", "Exponents"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\[Eta]", "=", 
+     RowBox[{"3", "/", "4"}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\[Epsilon]Lam", " ", "=", " ", "0.95"}], ";"}], 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Consumer", " ", "metabolic", " ", "parameters"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"B0", "=", 
+     RowBox[{"4.7", "*", 
+      RowBox[{"10", "^", 
+       RowBox[{"(", 
+        RowBox[{"-", "2"}], ")"}]}]}]}], ";"}], 
+   RowBox[{"(*", 
+    RowBox[{"W", " ", 
+     RowBox[{"g", "^", 
+      RowBox[{"\[Minus]", "0.75"}]}], " ", "for", " ", 
+     RowBox[{"herbivores", " ", "::", " ", "FMR"}]}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Em", "=", "5774"}], ";"}], 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"J", "/", "gram"}], " ", "-", " ", 
+     RowBox[{
+     "energy", " ", "required", " ", "to", " ", "build", " ", "gram", " ", 
+      "of", " ", "herbivore"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"a", " ", "=", " ", 
+     FractionBox["B0", "Em"]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"Emprime", " ", "=", "7000"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"aprime", " ", "=", "  ", 
+     FractionBox["B0", "Emprime"]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Predator", " ", "metabolic", " ", "parameters"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"B0", "=", 
+      RowBox[{"4.7", "*", 
+       RowBox[{"10", "^", 
+        RowBox[{"(", 
+         RowBox[{"-", "2"}], ")"}]}]}]}], ";"}], 
+    RowBox[{"(*", 
+     RowBox[{"W", " ", 
+      RowBox[{"g", "^", 
+       RowBox[{"\[Minus]", "0.75"}]}]}], "*)"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"B0Pred", " ", "=", 
+     RowBox[{"1.9", "*", 
+      RowBox[{"10", "^", 
+       RowBox[{"-", "2"}]}]}]}], ";"}], " ", 
+   RowBox[{"(*", " ", 
+    RowBox[{"in", " ", 
+     RowBox[{"(", 
+      RowBox[{"kJ", "/", "d"}], ")"}], " ", "for", " ", "carnivora", " ", 
+     "from", " ", "Nagy", " ", "et", " ", 
+     RowBox[{"al", ".", " ", "1999"}]}], " ", "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"EmPred", "=", "5774"}], ";"}], 
+   RowBox[{"(*", 
+    RowBox[{
+    "Energy", " ", "to", " ", "synthesize", " ", "a", " ", "unit", " ", "of", 
+     " ", "biomass", " ", "not", " ", "during", " ", "starvation", " ", 
+     RowBox[{"J", "/", "gram"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"aPred", " ", "=", " ", 
+     FractionBox["B0Pred", "EmPred"]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Fat", " ", "and", " ", "Muscle"}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\[Gamma]1", "=", "1.19"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"\[Zeta]", "=", "1.00"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"f0", "=", "0.0202"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"mm0", "=", "0.383"}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+    "This", " ", "is", " ", "nearly", " ", "100", "%", " ", "from", " ", 
+     "Prange", " ", "et", " ", 
+     RowBox[{"al", ".", " ", "AmNat"}], " ", "1979"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"Energy", " ", "Density", " ", "of", " ", "PREY", " ", 
+     RowBox[{"Joules", "/", "gram"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"BLUBBER", " ", "energy", " ", "content", " ", "37670", " ", 
+     RowBox[{"J", "/", "gram"}], " ", "SAME", " ", "AS", " ", "FAT"}], " ", 
+    "*)"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{"NOTE", ":", " ", 
+     RowBox[{"THINK", " ", "CAREFULLY", " ", "ABOUT", " ", "THIS"}]}], " ", 
+    "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"FatJperG", " ", "=", " ", "37700"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ProteinJperG", " ", "=", " ", "17900"}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"MuscleJperG", " ", "=", " ", 
+     RowBox[{
+      RowBox[{"0.4", "*", "ProteinJperG"}], " ", "+", " ", 
+      RowBox[{"0.6", "*", "FatJperG"}]}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", "\[IndentingNewLine]", "\[IndentingNewLine]", 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"m0", "[", "M_", "]"}], ":=", 
+     RowBox[{"0.097", "*", 
+      SuperscriptBox["M", "0.92"]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"m0Pred", "[", "Mp_", "]"}], ":=", 
+     RowBox[{"0.097", "*", 
+      SuperscriptBox["Mp", "0.92"]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Percent", " ", "fat"}], " ", "+", " ", "muscle"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"percentconsumable", "[", "M_", "]"}], ":=", 
+      RowBox[{
+       RowBox[{"(", " ", 
+        RowBox[{
+         RowBox[{"0.02", "*", 
+          RowBox[{"M", "^", "1.19"}]}], " ", "+", " ", 
+         RowBox[{"0.38", "*", 
+          RowBox[{"M", "^", "1.00"}]}]}], ")"}], "/", "M"}]}], ";"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Or", " ", "1"}], " ", "-", " ", 
+     RowBox[{"percent", " ", "skeletal"}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"massSkeletalgrams", "[", "M_", "]"}], ":=", " ", 
+     RowBox[{"0.0335", "*", 
+      RowBox[{"M", "^", "1.09263"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"massFatgrams", "[", "M_", "]"}], ":=", 
+     RowBox[{"0.02", "*", 
+      RowBox[{"M", "^", "1.19"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"massMusclegrams", "[", "M_", "]"}], ":=", 
+     RowBox[{"0.38", "*", 
+      RowBox[{"M", "^", "1.0"}]}]}], ";"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"massOthergrams", "[", "M_", "]"}], ":=", 
+     RowBox[{"M", "-", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"massSkeletalgrams", "[", "M", "]"}], "+", 
+        RowBox[{"massFatgrams", "[", "M", "]"}], "+", 
+        RowBox[{"massMusclegrams", "[", "M", "]"}]}], ")"}]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{
+      RowBox[{"Eprey", "[", 
+       RowBox[{"M_", ",", "\[Epsilon]Eprey_"}], "]"}], " ", ":=", " ", 
+      RowBox[{
+       RowBox[{"(", 
+        RowBox[{
+         RowBox[{"(", 
+          RowBox[{"PercentProtein", "*", "TissueJperG"}], ")"}], "+", 
+         RowBox[{"(", 
+          RowBox[{"PercentFat", "*", "TissueJperG"}], ")"}], "+", "0"}], 
+        ")"}], "*", 
+       RowBox[{"(", 
+        RowBox[{"1", "+", "\[Epsilon]Eprey"}], ")"}], "*", 
+       RowBox[{"percentconsumable", "[", "M", "]"}]}]}], ";"}], "*)"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{"(*", 
+    RowBox[{
+     RowBox[{"Joules", "/", 
+      RowBox[{"gram", ":", " ", 
+       RowBox[{
+        RowBox[{"17000", " ", "protein"}], " ", "+", " ", 
+        RowBox[{"37000", " ", "fat"}], " ", "+", " ", 
+        RowBox[{
+        "0", " ", "carb", " ", "per", " ", "gram", " ", "of", " ", "meat", 
+         " ", "http"}]}], ":"}]}], "//", 
+     RowBox[{
+      RowBox[{
+       RowBox[{
+        RowBox[{
+         RowBox[{"www", ".", "fao", ".", "org"}], "/", "3"}], "/", "y5022e"}],
+        "/", 
+       RowBox[{"y5022e04", ".", "htm"}]}], "  ", "Modified", " ", "from", " ",
+       "Merrill", " ", "and", " ", "Watt", " ", 
+      RowBox[{
+       RowBox[{"(", "1973", ")"}], "."}]}]}], "*)"}], "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Eprey", "[", "M_", "]"}], ":=", 
+     RowBox[{
+      RowBox[{"(", 
+       RowBox[{"1", "/", 
+        RowBox[{"(", "M", ")"}]}], ")"}], "*", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{
+         RowBox[{"massFatgrams", "[", "M", "]"}], "*", "FatJperG"}], "+", 
+        RowBox[{
+         RowBox[{"massMusclegrams", "[", "M", "]"}], "*", "MuscleJperG"}], 
+        "+", 
+        RowBox[{
+         RowBox[{"massOthergrams", "[", "M", "]"}], "*", "MuscleJperG"}]}], 
+       ")"}]}]}], ";"}], "\[IndentingNewLine]", 
+   "\[IndentingNewLine]"}]}]], "Input",
+ CellChangeTimes->{{3.8922050013987713`*^9, 
+  3.892205002963503*^9}},ExpressionUUID->"6a5a52db-cc7c-40ab-94c8-\
+dbfdfafdfbca"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"\[Tau]Lam", "[", "M_", "]"}], ":=", " ", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"Log", "[", 
+       FractionBox[
+        RowBox[{"1", "-", 
+         SuperscriptBox["\[Epsilon]Lam", 
+          RowBox[{"1", "/", "4"}]]}], 
+        RowBox[{"1", " ", "-", " ", 
+         SuperscriptBox[
+          RowBox[{"(", 
+           FractionBox[
+            RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+          RowBox[{"1", "/", "4"}]]}]], "]"}]}], "*", 
+     FractionBox[
+      RowBox[{"4", "*", 
+       SuperscriptBox["M", 
+        RowBox[{"1", "/", "4"}]]}], "a"]}]}], ";"}], 
+  "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"\[Tau]LamPred", "[", "Mp_", "]"}], ":=", " ", 
+    RowBox[{
+     RowBox[{"-", 
+      RowBox[{"Log", "[", 
+       FractionBox[
+        RowBox[{"1", "-", 
+         SuperscriptBox["\[Epsilon]Lam", 
+          RowBox[{"1", "/", "4"}]]}], 
+        RowBox[{"1", " ", "-", " ", 
+         SuperscriptBox[
+          RowBox[{"(", 
+           FractionBox[
+            RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+          RowBox[{"1", "/", "4"}]]}]], "]"}]}], "*", 
+     FractionBox[
+      RowBox[{"4", "*", 
+       SuperscriptBox["Mp", 
+        RowBox[{"1", "/", "4"}]]}], "aPred"]}]}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{"Lifetime", " ", "Energetic", " ", "Requirements"}], 
+   "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"BLam", "[", "M_", "]"}], ":=", 
+    RowBox[{
+     FractionBox["1", 
+      RowBox[{"3", " ", "a"}]], 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"a", " ", 
+         RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], 
+        SuperscriptBox["M", 
+         RowBox[{"1", "/", "4"}]]]}]], " ", 
+     SuperscriptBox["M", 
+      RowBox[{"1", "/", "4"}]], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"3", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "1"}], "+", 
+          SuperscriptBox["\[ExponentialE]", 
+           FractionBox[
+            RowBox[{"a", " ", 
+             RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], 
+            SuperscriptBox["M", 
+             RowBox[{"1", "/", "4"}]]]]}], ")"}], " ", 
+        RowBox[{"m0", "[", "M", "]"}]}], "+", 
+       RowBox[{"M", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"-", "48"}], " ", 
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"3", " ", "a", " ", 
+              RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], 
+             RowBox[{"4", " ", 
+              SuperscriptBox["M", 
+               RowBox[{"1", "/", "4"}]]}]]], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "1"}], "+", 
+             SuperscriptBox[
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+              RowBox[{"1", "/", "4"}]]}], ")"}]}], "-", 
+          RowBox[{"36", " ", 
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"a", " ", 
+              RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], 
+             RowBox[{"2", " ", 
+              SuperscriptBox["M", 
+               RowBox[{"1", "/", "4"}]]}]]], " ", 
+           SuperscriptBox[
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"-", "1"}], "+", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], ")"}], "2"]}], "-", 
+          RowBox[{"16", " ", 
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"a", " ", 
+              RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], 
+             RowBox[{"4", " ", 
+              SuperscriptBox["M", 
+               RowBox[{"1", "/", "4"}]]}]]], " ", 
+           SuperscriptBox[
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"-", "1"}], "+", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], ")"}], "3"]}], "+", 
+          RowBox[{"3", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "1"}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], "-", 
+             RowBox[{"6", " ", 
+              SqrtBox[
+               FractionBox[
+                RowBox[{"m0", "[", "M", "]"}], "M"]]}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+               RowBox[{"3", "/", "4"}]]}]}], ")"}]}], "+", 
+          RowBox[{
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"a", " ", 
+              RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], 
+             SuperscriptBox["M", 
+              RowBox[{"1", "/", "4"}]]]], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "25"}], "+", 
+             RowBox[{"12", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], "+", 
+             RowBox[{"6", " ", 
+              SqrtBox[
+               FractionBox[
+                RowBox[{"m0", "[", "M", "]"}], "M"]]}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0", "[", "M", "]"}], "M"], ")"}], 
+               RowBox[{"3", "/", "4"}]]}]}], ")"}]}]}], ")"}]}], "+", 
+       RowBox[{"3", " ", "a", " ", 
+        SuperscriptBox["\[ExponentialE]", 
+         FractionBox[
+          RowBox[{"a", " ", 
+           RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], 
+          SuperscriptBox["M", 
+           RowBox[{"1", "/", "4"}]]]], " ", 
+        SuperscriptBox["M", 
+         RowBox[{"3", "/", "4"}]], " ", 
+        RowBox[{"\[Tau]Lam", "[", "M", "]"}]}]}], ")"}]}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "This", " ", "is", " ", "an", " ", "equivalent", " ", "function", " ", 
+    "but", " ", "slower"}], "*)"}], "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"BLam", "[", "M_", "]"}], ":=", 
+     RowBox[{"Integrate", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"(", 
+            RowBox[{"1", "-", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"1", "-", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{"m0", "[", "M", "]"}], "/", "M"}], ")"}], "^", 
+                 RowBox[{"(", 
+                  RowBox[{"1", "/", "4"}], ")"}]}]}], ")"}], "*", 
+              RowBox[{"E", "^", 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"-", "a"}], "*", 
+                 RowBox[{"t", "/", 
+                  RowBox[{"(", 
+                   RowBox[{"4", "*", 
+                    RowBox[{"M", "^", 
+                    RowBox[{"(", 
+                    RowBox[{"1", "/", "4"}], ")"}]}]}], ")"}]}]}], 
+                ")"}]}]}]}], ")"}], ")"}], "^", "4"}], ")"}], "*", "M"}], ",", 
+       RowBox[{"{", 
+        RowBox[{"t", ",", "0", ",", 
+         RowBox[{"\[Tau]Lam", "[", "M", "]"}]}], "}"}]}], "]"}]}], ";"}], 
+   "*)"}], " "}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{
+    RowBox[{"BLamPred", "[", "Mp_", "]"}], ":=", 
+    RowBox[{
+     FractionBox["1", 
+      RowBox[{"3", " ", "aPred"}]], 
+     SuperscriptBox["\[ExponentialE]", 
+      RowBox[{"-", 
+       FractionBox[
+        RowBox[{"aPred", " ", 
+         RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], 
+        SuperscriptBox["Mp", 
+         RowBox[{"1", "/", "4"}]]]}]], " ", 
+     SuperscriptBox["Mp", 
+      RowBox[{"1", "/", "4"}]], " ", 
+     RowBox[{"(", 
+      RowBox[{
+       RowBox[{"3", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"-", "1"}], "+", 
+          SuperscriptBox["\[ExponentialE]", 
+           FractionBox[
+            RowBox[{"aPred", " ", 
+             RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], 
+            SuperscriptBox["Mp", 
+             RowBox[{"1", "/", "4"}]]]]}], ")"}], " ", 
+        RowBox[{"m0Pred", "[", "Mp", "]"}]}], "+", 
+       RowBox[{"Mp", " ", 
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{
+           RowBox[{"-", "48"}], " ", 
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"3", " ", "aPred", " ", 
+              RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], 
+             RowBox[{"4", " ", 
+              SuperscriptBox["Mp", 
+               RowBox[{"1", "/", "4"}]]}]]], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "1"}], "+", 
+             SuperscriptBox[
+              RowBox[{"(", 
+               FractionBox[
+                RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+              RowBox[{"1", "/", "4"}]]}], ")"}]}], "-", 
+          RowBox[{"36", " ", 
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"aPred", " ", 
+              RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], 
+             RowBox[{"2", " ", 
+              SuperscriptBox["Mp", 
+               RowBox[{"1", "/", "4"}]]}]]], " ", 
+           SuperscriptBox[
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"-", "1"}], "+", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], ")"}], "2"]}], "-", 
+          RowBox[{"16", " ", 
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"aPred", " ", 
+              RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], 
+             RowBox[{"4", " ", 
+              SuperscriptBox["Mp", 
+               RowBox[{"1", "/", "4"}]]}]]], " ", 
+           SuperscriptBox[
+            RowBox[{"(", 
+             RowBox[{
+              RowBox[{"-", "1"}], "+", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], ")"}], "3"]}], "+", 
+          RowBox[{"3", " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "1"}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], "-", 
+             RowBox[{"6", " ", 
+              SqrtBox[
+               FractionBox[
+                RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"]]}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+               RowBox[{"3", "/", "4"}]]}]}], ")"}]}], "+", 
+          RowBox[{
+           SuperscriptBox["\[ExponentialE]", 
+            FractionBox[
+             RowBox[{"aPred", " ", 
+              RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], 
+             SuperscriptBox["Mp", 
+              RowBox[{"1", "/", "4"}]]]], " ", 
+           RowBox[{"(", 
+            RowBox[{
+             RowBox[{"-", "25"}], "+", 
+             RowBox[{"12", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+               RowBox[{"1", "/", "4"}]]}], "+", 
+             RowBox[{"6", " ", 
+              SqrtBox[
+               FractionBox[
+                RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"]]}], "+", 
+             RowBox[{"4", " ", 
+              SuperscriptBox[
+               RowBox[{"(", 
+                FractionBox[
+                 RowBox[{"m0Pred", "[", "Mp", "]"}], "Mp"], ")"}], 
+               RowBox[{"3", "/", "4"}]]}]}], ")"}]}]}], ")"}]}], "+", 
+       RowBox[{"3", " ", "aPred", " ", 
+        SuperscriptBox["\[ExponentialE]", 
+         FractionBox[
+          RowBox[{"aPred", " ", 
+           RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], 
+          SuperscriptBox["Mp", 
+           RowBox[{"1", "/", "4"}]]]], " ", 
+        SuperscriptBox["Mp", 
+         RowBox[{"3", "/", "4"}]], " ", 
+        RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}]}], ")"}]}]}], ";"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{
+     RowBox[{"Bpred", "[", "Mp_", "]"}], ":=", 
+     RowBox[{"Integrate", "[", 
+      RowBox[{
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{
+          RowBox[{"(", 
+           RowBox[{"(", 
+            RowBox[{"1", "-", 
+             RowBox[{
+              RowBox[{"(", 
+               RowBox[{"1", "-", 
+                RowBox[{
+                 RowBox[{"(", 
+                  RowBox[{
+                   RowBox[{"m0Pred", "[", "Mp", "]"}], "/", "Mp"}], ")"}], 
+                 "^", 
+                 RowBox[{"(", 
+                  RowBox[{"1", "/", "4"}], ")"}]}]}], ")"}], "*", 
+              RowBox[{"E", "^", 
+               RowBox[{"(", 
+                RowBox[{
+                 RowBox[{"-", "aPred"}], "*", 
+                 RowBox[{"t", "/", 
+                  RowBox[{"(", 
+                   RowBox[{"4", "*", 
+                    RowBox[{"Mp", "^", 
+                    RowBox[{"(", 
+                    RowBox[{"1", "/", "4"}], ")"}]}]}], ")"}]}]}], 
+                ")"}]}]}]}], ")"}], ")"}], "^", "4"}], ")"}], "*", "Mp"}], 
+       ",", 
+       RowBox[{"{", 
+        RowBox[{"t", ",", "0", ",", 
+         RowBox[{"\[Tau]LamPred", "[", "Mp", "]"}]}], "}"}]}], "]"}]}], ";"}],
+    "*)"}], "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Natural", " ", "Mortality", " ", "intercepts", " ", "and", " ", 
+    "slopes"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"a0", " ", "=", " ", 
+    RowBox[{"1.88", "*", 
+     RowBox[{"10", "^", 
+      RowBox[{"-", "8"}]}]}]}], " ", ";"}], 
+  RowBox[{"(*", 
+   RowBox[{"sec", " ", 
+    RowBox[{"grams", "^", 
+     RowBox[{"-", "b0"}]}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a1", "=", 
+   RowBox[{"1.45", "*", 
+    RowBox[{"10", "^", 
+     RowBox[{"-", "7"}]}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"a2", "=", 
+   RowBox[{"4.04", "*", 
+    RowBox[{"10", "^", "6"}]}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"b0", "=", 
+   RowBox[{"-", "0.56"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"b1", "=", 
+   RowBox[{"-", "0.27"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"b2", "=", "0.30"}], ";"}]}], "Input",
+ CellChangeTimes->{{3.892115886125196*^9, 3.892115886955036*^9}, {
+  3.892205007313528*^9, 
+  3.8922050074768953`*^9}},ExpressionUUID->"beb07642-88a4-4252-8ae9-\
+8c36ff4dc43d"],
+
+Cell["Import Fit Data", "Text",
+ CellChangeTimes->{{3.892116285905217*^9, 
+  3.892116288121093*^9}},ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-\
+84dc2a80570b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ExpPreyfitdata", " ", "=", "  ", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "$HomeDirectory", ",", 
+        "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/mammalian_\
+fit_table.csv\>\""}], "}"}], "]"}], ",", "\"\<csv\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ExpPreymassdata", " ", "=", "  ", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "$HomeDirectory", ",", 
+        "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/mammalian_\
+mass.csv\>\""}], "}"}], "]"}], ",", "\"\<csv\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]"}], "Input",ExpressionUUID->"8d582e9c-9c58-49a7-\
+ad77-21a9401e343e"],
+
+Cell["\<\
+Calculate the Expected size of a prey given an predator of size Mp\
+\>", "Text",
+ CellChangeTimes->{{3.88246302767774*^9, 3.8824630442827168`*^9}, {
+  3.892382063047894*^9, 
+  3.8923820709999027`*^9}},ExpressionUUID->"df31d167-db0d-40fd-8222-\
+5754bc16f370"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"NOTE", ":", " ", 
+    RowBox[{
+    "THIS", " ", "IS", " ", "WHAT", " ", "MAKES", " ", "THIS", " ", 
+     "ANALYSIS", " ", "DIFFERENT", " ", "FROM", " ", "PREYPERSP"}]}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"OptPreyMass", "[", "Mp_", "]"}], " ", ":=", " ", 
+     RowBox[{"ppmrintExpPrey", "*", 
+      SuperscriptBox["Mp", "ppmrslopeExpPrey"]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrslopeExpPrey", " ", "=", " ", 
+     RowBox[{"(", 
+      RowBox[{"ExpPreyfitdata", "[", 
+       RowBox[{"[", 
+        RowBox[{"3", ",", "1"}], "]"}], "]"}], ")"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrintExpPrey", " ", "=", " ", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{"(", 
+        RowBox[{"ExpPreyfitdata", "[", 
+         RowBox[{"[", 
+          RowBox[{"2", ",", "1"}], "]"}], "]"}], ")"}], "]"}], "*", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "/", "1000"}], ")"}], "^", "ppmrslopeExpPrey"}], ")"}], 
+      "*", "1000"}]}], ";"}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"converted", " ", "from", " ", "KG", " ", "to", " ", "grams"}], 
+    "*)"}]}]}]], "Input",
+ CellChangeTimes->{
+  3.892039325040769*^9, {3.892381941411152*^9, 
+   3.8923820055708942`*^9}},ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-\
+76253caf218a"],
+
+Cell["Import Fit Data", "Text",
+ CellChangeTimes->{{3.892116285905217*^9, 
+  3.892116288121093*^9}},ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-\
+84dc2a80570b"],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ExpPredfitdata", " ", "=", " ", 
+   RowBox[{"Import", "[", 
+    RowBox[{
+     RowBox[{"StringJoin", "[", 
+      RowBox[{"{", 
+       RowBox[{
+       "$HomeDirectory", ",", 
+        "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPred_fit_\
+table_revreps.csv\>\""}], "}"}], "]"}], ",", "\"\<csv\>\""}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"ExpPredmassdata", " ", "=", " ", 
+   RowBox[{"Import", "[", 
+    RowBox[{"StringJoin", "[", 
+     RowBox[{"{", 
+      RowBox[{
+      "$HomeDirectory", ",", 
+       "\"\</Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPredmass_\
+tablereps.csv\>\""}], "}"}], "]"}], "]"}]}], 
+  ";"}], "\[IndentingNewLine]"}], "Input",
+ CellChangeTimes->{
+  3.892205366727188*^9, {3.892226041824211*^9, 3.892226054142683*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"8d582e9c-9c58-49a7-ad77-21a9401e343e"],
+
+Cell["\<\
+Calculate the Expected size of a predator given an herbivore prey of size M\
+\>", "Text",
+ CellChangeTimes->{{3.88246302767774*^9, 3.8824630442827168`*^9}, {
+  3.8923820853329067`*^9, 
+  3.8923820856361227`*^9}},ExpressionUUID->"df31d167-db0d-40fd-8222-\
+5754bc16f370"],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"(*", 
+   RowBox[{"NOTE", ":", " ", 
+    RowBox[{
+    "THIS", " ", "IS", " ", "WHAT", " ", "MAKES", " ", "THIS", " ", 
+     "ANALYSIS", " ", "DIFFERENT", " ", "FROM", " ", "PREDPERSP"}]}], "*)"}], 
+  "\[IndentingNewLine]", 
+  RowBox[{
+   RowBox[{
+    RowBox[{
+     RowBox[{"OptPredMass", "[", "M_", "]"}], " ", ":=", " ", 
+     RowBox[{"ppmrintExpPred", "*", 
+      SuperscriptBox["M", "ppmrslopeExpPred"]}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrslopeExpPred", " ", "=", " ", 
+     RowBox[{"(", 
+      RowBox[{"ExpPredfitdata", "[", 
+       RowBox[{"[", 
+        RowBox[{"3", ",", "1"}], "]"}], "]"}], ")"}]}], ";"}], 
+   "\[IndentingNewLine]", 
+   RowBox[{
+    RowBox[{"ppmrintExpPred", " ", "=", " ", 
+     RowBox[{
+      RowBox[{"Exp", "[", 
+       RowBox[{"(", 
+        RowBox[{"ExpPredfitdata", "[", 
+         RowBox[{"[", 
+          RowBox[{"2", ",", "1"}], "]"}], "]"}], ")"}], "]"}], "*", 
+      RowBox[{"(", 
+       RowBox[{
+        RowBox[{"(", 
+         RowBox[{"1", "/", "1000"}], ")"}], "^", "ppmrslopeExpPred"}], ")"}], 
+      "*", "1000"}]}], ";"}], " ", 
+   RowBox[{"(*", 
+    RowBox[{"converted", " ", "from", " ", "KG", " ", "to", " ", "grams"}], 
+    "*)"}], 
+   RowBox[{"(*", 
+    RowBox[{"converted", " ", "from", " ", "KG", " ", "to", " ", "grams"}], 
+    "*)"}]}]}]], "Input",
+ CellChangeTimes->{
+  3.892039325040769*^9, {3.892205395927361*^9, 3.892205397684834*^9}, {
+   3.892382030083412*^9, 
+   3.892382043730968*^9}},ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-\
+76253caf218a"]
+},
+WindowSize->{808, 911},
+WindowMargins->{{Automatic, 638}, {Automatic, 191}},
+FrontEndVersion->"13.2 for Mac OS X x86 (64-bit) (November 18, 2022)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"0bf000f4-956c-404e-99c1-17ce7c4e044a"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[558, 20, 319, 7, 58, "Text",ExpressionUUID->"8044aa71-9b8b-4495-b2d8-25ba3bfda9fd"],
+Cell[880, 29, 9431, 260, 1319, "Input",ExpressionUUID->"6a5a52db-cc7c-40ab-94c8-dbfdfafdfbca"],
+Cell[10314, 291, 15395, 440, 1198, "Input",ExpressionUUID->"beb07642-88a4-4252-8ae9-8c36ff4dc43d"],
+Cell[25712, 733, 157, 3, 35, "Text",ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-84dc2a80570b"],
+Cell[25872, 738, 823, 23, 262, "Input",ExpressionUUID->"8d582e9c-9c58-49a7-ad77-21a9401e343e"],
+Cell[26698, 763, 268, 6, 35, "Text",ExpressionUUID->"df31d167-db0d-40fd-8222-5754bc16f370"],
+Cell[26969, 771, 1410, 41, 115, "Input",ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-76253caf218a"],
+Cell[28382, 814, 157, 3, 35, "Text",ExpressionUUID->"7071f0a1-b4db-4e24-aa2d-84dc2a80570b"],
+Cell[28542, 819, 906, 24, 262, "Input",ExpressionUUID->"8d582e9c-9c58-49a7-ad77-21a9401e343e"],
+Cell[29451, 845, 279, 6, 35, "Text",ExpressionUUID->"df31d167-db0d-40fd-8222-5754bc16f370"],
+Cell[29733, 853, 1564, 45, 136, "Input",ExpressionUUID->"9bd77ec8-9a67-45e4-a1e6-76253caf218a"]
+}
+]
+*)
+

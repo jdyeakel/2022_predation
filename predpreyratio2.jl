@@ -7,6 +7,9 @@ using(Distributed)
 using(UnicodePlots)
 
 haywardfulldata = CSV.read("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/data_hayward_all.csv",header=true,DataFrame);
+
+delongdata = CSV.read("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/data_delong_mammal.csv",header=true,DataFrame);
+
 # haypredmass = haywardfulldata[!,:Predbodymaskg];
 # haypreymass = haywardfulldata[!,:Preybodymasskg];
 # haypercent = haywardfulldata[!,:PercentOfKills];
@@ -21,6 +24,12 @@ haywardfulldata = CSV.read("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerRe
 
 # groupsize = [4.1, 2.36, 1, 1, 4, 1, 1]
 
+# Cut out predators < 50 kg
+# unique(haywardfulldata[!,:Predbodymasskg])
+smallpreds = findall(x->x<50,haywardfulldata[!,:Predbodymasskg]);
+haywardfulldata = delete!(haywardfulldata,smallpreds);
+#NOTE: if you do this, append _large to output!
+
 #Caculcate mean preferred mass per predator
 preds = unique(haywardfulldata[!,:Predator]);
 # preds = preds[[1,2,3,4,6]]
@@ -30,6 +39,7 @@ function genpredprey()
     predinds = Array{Float64}(undef,0);
     meancarnivore = Array{Float64}(undef,0);
     meanherbivore = Array{Float64}(undef,0);
+    meancarnivorediet = Array{Float64}(undef,length(preds));
     for i=1:length(preds)
         pref = haywardfulldata[!,:PercentOfKills][findall(x->x==preds[i],haywardfulldata[!,:Predator])];
         pref[findall(isnan,pref)].=0.;
@@ -54,6 +64,8 @@ function genpredprey()
         predinds = [predinds; predinds_draw];
         preyi = haywardfulldata[!,:Prey][findall(x->x==preds[i],haywardfulldata[!,:Predator])];
         
+        #Make empty preyinds list for predator i
+        preyinds_predi = Array{Float64}(undef,0);
         for j=1:length(preyi)
             if pref[j] > 0.
                 #draw body masses
@@ -66,11 +78,17 @@ function genpredprey()
                 preybodysizedist = Normal(meanmass,massSD);
                 numbers = Int64(pref[j]);
                 preyinds_draw = abs.(rand(preybodysizedist,numbers));
-                preyinds = [preyinds; preyinds_draw];
+                #Build predator-specific prey inds first, then contatenate to full list after loop
+                #NOTE: checked and this doesn't change anything
+                preyinds_predi = [preyinds_predi; preyinds_draw];
             end
         end
+        meancarnivorediet[i] = mean(preyinds_predi);
+        #Concatenate full list
+        preyinds = [preyinds; preyinds_predi];
+        
     end
-    return(predinds,preyinds,meancarnivore,meanherbivore)
+    return(predinds,preyinds,meancarnivore,meanherbivore,meancarnivorediet)
 end
 
 #General sampling function
@@ -122,9 +140,9 @@ function lineartablebuild(x,y)
     rename!(fit_table,[:Fit,:FitLow,:FitHigh])
     return fit_table
 end
-    
 
-predinds,preyinds,meancarnivore,meanherbivore = genpredprey();
+
+predinds,preyinds,meancarnivore,meanherbivore,meancarnivorediet = genpredprey();
 R"""
 par(mfrow=c(2,2))
 plot($predinds,$preyinds,log='xy')
@@ -167,9 +185,12 @@ ExpPreyreps = Array{Float64}(undef,reps,sizebins,2);
 #Expected predator mass given a prey's mass
 ExpPredreps = Array{Float64}(undef,reps,sizebins,2);
 
+RawPrey_preds = Array{Float64}(undef,reps,length(preds));
+RawPrey_preys = Array{Float64}(undef,reps,length(preds));
+
 for r = 1:reps
     # sizebins = sizebinsvec[r];
-    predinds,preyinds,meancarnivore,meanherbivore = genpredprey();
+    predinds,preyinds,meancarnivore,meanherbivore,meancarnivorediet = genpredprey();
 
     ## EXPECTED PREY MASS GIVEN PREDATOR MASS
     meanExpPrey_predmass, meanExpPrey_preymass = samplinginteraction(predinds,preyinds,sizebins,1);
@@ -190,7 +211,14 @@ for r = 1:reps
     ExpPredreps[r,1:lsp,2] = meanExpPred_predmass;
     ExpPredreps[r,(lsp+1):sizebins,1] .= NaN;
     ExpPredreps[r,(lsp+1):sizebins,2] .= NaN;
+
+    RawPrey_preds[r,:] = meancarnivore;
+    RawPrey_preys[r,:] = meancarnivorediet;
+
 end
+
+RawPrey_preds_mean = mean(RawPrey_preds,dims=1);
+RawPrey_preys_mean = mean(RawPrey_preys,dims=1);
 
 
 #REMOVE NAs
@@ -199,7 +227,7 @@ ExpPrey_predvalues = ExpPrey_predvec[findall(!isnan,ExpPrey_predvec)];
 
 ExpPrey_preyvec =  vec(ExpPreyreps[:,:,2]);
 ExpPrey_preyvalues = ExpPrey_preyvec[findall(!isnan,ExpPrey_preyvec)];
-# scatterplot(log.(ExpPrey_predvalues),log.(ExpPrey_preyvalues))
+
 
 
 
@@ -207,7 +235,13 @@ ExpPred_preyvec = vec(ExpPredreps[:,:,1]);
 ExpPred_preyvalues = ExpPred_preyvec[findall(!isnan,ExpPred_preyvec)];
 ExpPred_predvec =  vec(ExpPredreps[:,:,2]);
 ExpPred_predvalues = ExpPred_predvec[findall(!isnan,ExpPred_predvec)];
-# scatterplot(log.(ExpPred_preyvalues),log.(ExpPred_predvalues))
+
+
+
+
+
+scatterplot(log.(ExpPrey_predvalues),log.(ExpPrey_preyvalues))
+scatterplot(log.(ExpPred_preyvalues),log.(ExpPred_predvalues))
 
 
 #Relationship of Expected Prey mass given Predator mass
@@ -229,17 +263,64 @@ abline(linearmodel)
 
 
 #EXPORT for the mathematica notebook
+# CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPrey_fit_table_revreps.csv",ExpPrey_fit_table; header=true);
 
-CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPrey_fit_table_revreps.csv",ExpPrey_fit_table; header=true);
+# ExpPrey_sizetable = DataFrame([ExpPrey_predvalues ExpPrey_preyvalues],:auto);
+# rename!(ExpPrey_sizetable,[:predmass,:preymass]);
+# CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPreymass_tablereps.csv",ExpPrey_sizetable; header=false);
+
+
+# CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPred_fit_table_revreps.csv",ExpPred_fit_table; header=true);
+
+# ExpPred_sizetable = DataFrame([ExpPred_preyvalues ExpPred_predvalues],:auto);
+# rename!(ExpPred_sizetable,[:preymass,:predmass]);
+# CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPredmass_tablereps.csv",ExpPred_sizetable; header=false);
+
+
+
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPrey_fit_table_revreps_large.csv",ExpPrey_fit_table; header=true);
 
 ExpPrey_sizetable = DataFrame([ExpPrey_predvalues ExpPrey_preyvalues],:auto);
 rename!(ExpPrey_sizetable,[:predmass,:preymass]);
-CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPreymass_tablereps.csv",ExpPrey_sizetable; header=false);
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPreymass_tablereps_large.csv",ExpPrey_sizetable; header=false);
 
 
-CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPred_fit_table_revreps.csv",ExpPred_fit_table; header=true);
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPred_fit_table_revreps_large.csv",ExpPred_fit_table; header=true);
 
 ExpPred_sizetable = DataFrame([ExpPred_preyvalues ExpPred_predvalues],:auto);
 rename!(ExpPred_sizetable,[:preymass,:predmass]);
-CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPredmass_tablereps.csv",ExpPred_sizetable; header=false);
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/ExpPredmass_tablereps_large.csv",ExpPred_sizetable; header=false);
 
+RawPrey_sizetable = DataFrame([RawPrey_preds_mean' RawPrey_preys_mean'],:auto);
+rename!(RawPrey_sizetable,[:predmass,:preymass]);
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/RawPreymass.csv",RawPrey_sizetable; header=false);
+
+
+
+# Delong data - RAW DATA
+delong_preds = unique(delongdata[!,:Species_name]);
+#NOTE: remove ursus arctos - it is matched only with salmon
+# delong_preds = delong_preds[delong_preds .!= "Ursus arctos"];
+delong_predmass = Array{Float64}(undef,length(delong_preds));
+delong_preymass = Array{Float64}(undef,length(delong_preds));
+for i=1:length(delong_preds)
+    predi = findall(x->x==delong_preds[i],delongdata[!,:Species_name]);
+    delong_predmass[i] = mean(delongdata[predi,:Pred_mass_kg]);
+    delong_preymass[i] = mean(delongdata[predi,:Prey_mass_kg]);
+end
+
+RawPrey_sizetable_delong = DataFrame([delong_predmass delong_preymass],:auto);
+rename!(RawPrey_sizetable_delong,[:predmass,:preymass]);
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/RawPreymass_delong.csv",RawPrey_sizetable_delong; header=false);
+
+
+#Evaluate fit for all MEAN MAMMALIAN DATA (Hayward + Delong)
+RawMammalianMean_preds = vec([RawPrey_preds_mean'; delong_predmass]);
+RawMammalianMean_prey = vec([RawPrey_preys_mean'; delong_preymass]);
+mammalian_fit_table=lineartablebuild(RawMammalianMean_preds,RawMammalianMean_prey);
+
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/mammalian_fit_table.csv",mammalian_fit_table; header=true);
+
+Rawmammalian_sizetable = DataFrame([RawMammalianMean_preds RawMammalianMean_prey],:auto);
+rename!(Rawmammalian_sizetable,[:predmass,:preymass]);
+CSV.write("$(homedir())/Dropbox/PostDoc/2022_PredatorConsumerResource/data/mammalian_mass.csv",Rawmammalian_sizetable; header=false);
